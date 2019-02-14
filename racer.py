@@ -13,31 +13,73 @@ import pyautogui
 # KeyRight = pyautogui.press('right')
 # KeyLeft = pyautogui.press('left')
 
+def make_coordinates(image,line_parameters):
+    slope, intercept = line_parameters
+
+    y1 = image.shape[0]
+    y2 = int(y1*(3/5))
+
+    x1 = int((y1-intercept)/slope)
+    x2 = int((y2-intercept)/slope)
+
+    return np.array([x1,y1,x2,y2])
+
+
+
+
+def average_slope_intercept(image,lines):
+    left_fit = []
+    right_fit = []
+    max_slope = 0.35
+    min_slope = 0.2
+    try:
+        for line in lines:
+            x1,y1,x2,y2 = line.reshape(4)
+            parameters = np.polyfit((x1,x2),(y1,y2),1)
+            slope = parameters[0]
+            intercept = parameters[1]
+            if slope > -max_slope and slope < min_slope:
+                left_fit.append((slope,intercept))
+            elif slope < max_slope and slope > min_slope:
+                right_fit.append((slope,intercept))
+        print("left lines: " , left_fit)
+        print("right lines: " , right_fit)
+        right_fit_avg = np.average(right_fit,axis=0)
+        left_fit_avg = np.average(left_fit,axis=0)
+
+        left_line = make_coordinates(image,left_fit_avg)
+        right_line = make_coordinates(image,right_fit_avg)
+        return np.array([left_line,right_line])
+
+    except:
+        print("no lines found")
+
+
 def pressKey(key):
-        print("Key " + key + " pressed.")
-        pyautogui.keyDown(key)
-        pyautogui.keyUp(key)
+    print("Key " + key + " pressed.")
+    pyautogui.keyDown(key)
+    pyautogui.keyUp(key)
 
 def testKeypresses():
 
-        for i in list(range(4))[::-1]:
-                print(i+1)
-                time.sleep(1)
-        while True:
-                print('return')
-                pressKey('right')
-                time.sleep(2)
-                pressKey('z')
-                time.sleep(2)
+    for i in list(range(4))[::-1]:
+        print(i+1)
+        time.sleep(1)
+    while True:
+        print('return')
+        pressKey('right')
+        time.sleep(2)
+        pressKey('z')
+        time.sleep(2)
 
 
 def draw_lines(img,lines):
-        try:
-                for line in lines:
-                        coords = line[0]
-                        cv2.line(img,(coords[0],coords[1]),(coords[2],coords[3]),[255,0,0],3)
-        except:
-                pass
+    try:
+        for line in lines:
+            coords = line
+            cv2.line(img,(coords[0],coords[1]),(coords[2],coords[3]),[255,0,0],3)
+    except:
+        pass
 
 
 def roi(img, vertices):
@@ -64,7 +106,8 @@ def process_img(original_image):
 
     processed_img = roi(processed_img, [vertices])
     lines = cv2.HoughLinesP(processed_img,1,np.pi/180,180,np.array([]),100,5 )
-    draw_lines(processed_img,lines)
+    avg_lines = average_slope_intercept(processed_img,lines)
+    draw_lines(processed_img,avg_lines)
     
     return processed_img
 
@@ -81,3 +124,4 @@ def main():
             cv2.destroyAllWindows()
             break
 main()
+
