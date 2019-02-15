@@ -14,8 +14,6 @@ import pyautogui
 # KeyLeft = pyautogui.press('left')
 
 def line_line_intersection(line1,line2):
-    print("Line 1 ",line1.item(0))
-    print("Line 2 ", line2)
     x1 = line1.item(0)
     y1 = line1.item(1)
     x2 = line1.item(2)
@@ -28,7 +26,6 @@ def line_line_intersection(line1,line2):
 
     px = ((x1*y2-y1*x2)*(x3-x4)-(x1-x2)*(x3*y4-y3*x4))/((x1-x2)*(y3-y4)-(y1-y2)*(x3-x4))
     py = ((x1*y2-y1*x2)*(y3-y4)-(y1-y2)*(x3*y4-y3*x4))/((x1-x2)*(y3-y4)-(y1-y2)*(x3-x4))
-    print("Inters point: ",px,py)
     return np.array([px,py])
 
 
@@ -72,6 +69,7 @@ def average_slope_intercept(image,lines):
 
     except:
         print("no lines found")
+        return np.array([])
 
 
 def pressKey(key):
@@ -100,6 +98,13 @@ def draw_lines(img,lines):
     except:
         pass
 
+def draw_point(img, coord):
+    try:
+        print("Circle coords: ",coord.item(0),coord.item(1))
+        cv2.circle(img,(int(coord.item(0)),int(coord.item(1))),10,(255, 0, 0), -1)
+    except:
+        print("Unable to draw the point!")
+
 
 def roi(img, vertices):
     #blank mask:
@@ -126,12 +131,10 @@ def process_img(original_image):
     processed_img = roi(processed_img, [vertices])
     lines = cv2.HoughLinesP(processed_img,1,np.pi/180,180,np.array([]),100,5 )
     avg_lines = average_slope_intercept(processed_img,lines)
-    try:
-        print("avg lines: ",type(avg_lines[0]), " ", avg_lines[1])
+
+    if avg_lines.size != 0:
         intersection = line_line_intersection(avg_lines[0],avg_lines[1])
-        print(intersection)
-    except:
-        print("No intersection!")
+        draw_point(processed_img, intersection)
 
     draw_lines(processed_img,avg_lines)
     
