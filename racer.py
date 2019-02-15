@@ -13,6 +13,25 @@ import pyautogui
 # KeyRight = pyautogui.press('right')
 # KeyLeft = pyautogui.press('left')
 
+def line_line_intersection(line1,line2):
+    print("Line 1 ",line1.item(0))
+    print("Line 2 ", line2)
+    x1 = line1.item(0)
+    y1 = line1.item(1)
+    x2 = line1.item(2)
+    y2 = line1.item(3)
+
+    x3 = line2.item(0)
+    y3 = line2.item(1)
+    x4 = line2.item(2)
+    y4 = line2.item(3)
+
+    px = ((x1*y2-y1*x2)*(x3-x4)-(x1-x2)*(x3*y4-y3*x4))/((x1-x2)*(y3-y4)-(y1-y2)*(x3-x4))
+    py = ((x1*y2-y1*x2)*(y3-y4)-(y1-y2)*(x3*y4-y3*x4))/((x1-x2)*(y3-y4)-(y1-y2)*(x3-x4))
+    print("Inters point: ",px,py)
+    return np.array([px,py])
+
+
 def make_coordinates(image,line_parameters):
     slope, intercept = line_parameters
 
@@ -42,8 +61,8 @@ def average_slope_intercept(image,lines):
                 left_fit.append((slope,intercept))
             elif slope < max_slope and slope > min_slope:
                 right_fit.append((slope,intercept))
-        print("left lines: " , left_fit)
-        print("right lines: " , right_fit)
+        #print("left lines: " , left_fit)
+        #print("right lines: " , right_fit)
         right_fit_avg = np.average(right_fit,axis=0)
         left_fit_avg = np.average(left_fit,axis=0)
 
@@ -107,6 +126,13 @@ def process_img(original_image):
     processed_img = roi(processed_img, [vertices])
     lines = cv2.HoughLinesP(processed_img,1,np.pi/180,180,np.array([]),100,5 )
     avg_lines = average_slope_intercept(processed_img,lines)
+    try:
+        print("avg lines: ",type(avg_lines[0]), " ", avg_lines[1])
+        intersection = line_line_intersection(avg_lines[0],avg_lines[1])
+        print(intersection)
+    except:
+        print("No intersection!")
+
     draw_lines(processed_img,avg_lines)
     
     return processed_img
