@@ -124,7 +124,7 @@ def process_img(original_image):
     processed_img = cv2.cvtColor(original_image, cv2.COLOR_BGR2GRAY)
     processed_img = cv2.Canny(processed_img, threshold1=200, threshold2=300)
     # old vertices [[10,500],[10,300],[300,200],[500,200],[800,300],[800,500],]
-    vertices = np.array([[120,450],[120,400],[320,370],[475,370],[675,400],[675,450],
+    vertices = np.array([[120,450],[120,380],[320,380],[475,350],[675,400],[675,450],
                          ], np.int32)
     processed_img = cv2.GaussianBlur(processed_img,(5,5),0)
 
