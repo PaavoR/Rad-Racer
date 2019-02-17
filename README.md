@@ -6,4 +6,5 @@ The purpose of the project is to do simple self-driving AI to the NES game Rad R
 ### 1. Setting the window positioning
 Fist task was to make script that will set the emulator window to same postion every time. SetWinPos.py will do that.
 
-### 2. 
+### 2. Process the image and find lanes
+![alt text](https://github.com/PaavoR/Rad-Racer/blob/master/images/lanelines.jpg)
