@@ -19,4 +19,8 @@ These are the parts I did
 5. find lines from the image
 6. detect lanelines from all the lines
 
-![alt text](https://github.com/PaavoR/Rad-Racer/blob/master/images/lanelines.jpg "On the left is gamewindow and on the right is detected lines")
+![alt text](https://github.com/PaavoR/Rad-Racer/blob/master/images/lanelines.jpg)
+On the left is gamewindow and on the right is detected lines
+
+### 4. Implementing keypress events to gamewindow, when turning
+working on it next... I might improve section 3. first. 
